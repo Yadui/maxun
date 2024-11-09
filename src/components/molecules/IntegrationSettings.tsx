@@ -136,7 +136,7 @@ export const IntegrationSettingsModal = ({ isOpen, handleStart, handleClose }: I
                     </>
                 ) : (
                     <>
-                        {!recording.integrations?.google_sheets?.email ? (
+                        {!recording.integrations && !recording.integrations.google_sheets && !recording.integrations.google_sheets.email ? (
                             <>
                                 <p>If you enable this option, every time this robot runs a task successfully, its captured data will be appended to your Google Sheet.</p>
                                 <Button
@@ -149,7 +149,7 @@ export const IntegrationSettingsModal = ({ isOpen, handleStart, handleClose }: I
                             </>
                         ) : (
                             <>
-                                {recording.integrations?.google_sheets?.email && (
+                                {recording.integrations && recording.integrations.google_sheets && recording.integrations.google_sheets.email && (
                                     <Typography sx={{ margin: '20px 0px 30px 0px' }}>
                                         Authenticated as: {recording.integrations.google_sheets.email}
                                     </Typography>
