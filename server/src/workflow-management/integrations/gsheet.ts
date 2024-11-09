@@ -119,12 +119,28 @@ export async function writeDataToSheet(
     });
 
     oauth2Client.on("tokens", async (tokens) => {
+      // Create a copy of the current integrations or initialize as an empty object
+      const updatedIntegrations = robot.integrations ? { ...robot.integrations } : {};
+
+      // Ensure google_sheets is initialized as an object if it doesn't exist
+      updatedIntegrations.google_sheets = updatedIntegrations.google_sheets || {
+        email: null,
+        sheet_id: null,
+        sheet_name: null,
+        access_token: null,
+        refresh_token: null,
+      };
+
+      // Update tokens if they exist
       if (tokens.refresh_token) {
-        await robot.update({ google_refresh_token: tokens.refresh_token });
+        updatedIntegrations.google_sheets.refresh_token = tokens.refresh_token;
       }
       if (tokens.access_token) {
-        await robot.update({ google_access_token: tokens.access_token });
+        updatedIntegrations.google_sheets.access_token = tokens.access_token;
       }
+
+  // Update the Robot model with the modified integrations object
+  await robot.update({ integrations: updatedIntegrations });
     });
 
     const sheets = google.sheets({ version: "v4", auth: oauth2Client });
