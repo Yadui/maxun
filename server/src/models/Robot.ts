@@ -17,17 +17,17 @@ interface RobotWorkflow {
 
 interface IntegrationData {
   google_sheets?: {
-    email: string;
-    sheet_id: string;
-    sheet_name: string;
-    access_token: string;
-    refresh_token: string;
+    email: string | null;
+    sheet_id: string | null;
+    sheet_name: string | null;
+    access_token: string | null;
+    refresh_token: string | null;
   };
   airtable?: {
-    base_id: string;
-    table_name: string;
-    access_token: string;
-    refresh_token: string;
+    base_id: string | null;
+    table_name: string | null;
+    access_token: string | null;
+    refresh_token: string | null;
   };
 }
 
