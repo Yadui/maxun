@@ -51,7 +51,7 @@ export async function updateGoogleSheet(robotId: string, runId: string) {
       }
 
       const plainRobot = robot.toJSON();
-      
+
       const spreadsheetId = plainRobot.integrations?.google_sheets?.sheet_id;
 
       if (plainRobot.integrations?.google_sheets?.email && spreadsheetId) {
@@ -139,8 +139,8 @@ export async function writeDataToSheet(
         updatedIntegrations.google_sheets.access_token = tokens.access_token;
       }
 
-  // Update the Robot model with the modified integrations object
-  await robot.update({ integrations: updatedIntegrations });
+      // Update the Robot model with the modified integrations object
+      await robot.update({ integrations: updatedIntegrations });
     });
 
     const sheets = google.sheets({ version: "v4", auth: oauth2Client });
