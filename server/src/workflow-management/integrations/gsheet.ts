@@ -121,7 +121,9 @@ export async function writeDataToSheet(
 
     oauth2Client.on("tokens", async (tokens) => {
       // Create a copy of the current integrations or initialize as an empty object
-      const updatedIntegrations = robot.integrations ? { ...robot.integrations } : {};
+      const updatedIntegrations = robot.integrations
+        ? { ...robot.integrations }
+        : {};
 
       // Ensure google_sheets is initialized as an object if it doesn't exist
       updatedIntegrations.google_sheets = updatedIntegrations.google_sheets || {
