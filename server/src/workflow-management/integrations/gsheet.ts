@@ -52,9 +52,10 @@ export async function updateGoogleSheet(robotId: string, runId: string) {
 
       const plainRobot = robot.toJSON();
 
+      const email = plainRobot.integrations?.google_sheets?.email;
       const spreadsheetId = plainRobot.integrations?.google_sheets?.sheet_id;
 
-      if (plainRobot.integrations?.google_sheets?.email && spreadsheetId) {
+      if (email && spreadsheetId) {
         console.log(
           `Preparing to write data to Google Sheet for robot: ${robotId}, spreadsheetId: ${spreadsheetId}`
         );
