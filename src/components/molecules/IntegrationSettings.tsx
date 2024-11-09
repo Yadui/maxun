@@ -117,7 +117,7 @@ export const IntegrationSettingsModal = ({ isOpen, handleStart, handleClose }: I
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '65px' }}>
                 <Typography variant="h6" >Integrate with Google Sheet <Chip label="beta" color="primary" variant="outlined" /></Typography>
 
-                {recording && recording.google_sheet_id ? (
+                {recording && recording.integrations?.google_sheets && recording.integrations?.google_sheets?.sheet_id ? (
                     <>
                         <Alert severity="info">
                             <AlertTitle>Google Sheet Integrated Successfully.</AlertTitle>
@@ -136,7 +136,7 @@ export const IntegrationSettingsModal = ({ isOpen, handleStart, handleClose }: I
                     </>
                 ) : (
                     <>
-                        {!recording?.google_sheet_email ? (
+                        {!recording.integrations?.google_sheets?.email ? (
                             <>
                                 <p>If you enable this option, every time this robot runs a task successfully, its captured data will be appended to your Google Sheet.</p>
                                 <Button
@@ -149,7 +149,7 @@ export const IntegrationSettingsModal = ({ isOpen, handleStart, handleClose }: I
                             </>
                         ) : (
                             <>
-                                {recording.google_sheet_email && (
+                                {recording.integrations?.google_sheets?.email && (
                                     <Typography sx={{ margin: '20px 0px 30px 0px' }}>
                                         Authenticated as: {recording.google_sheet_email}
                                     </Typography>
