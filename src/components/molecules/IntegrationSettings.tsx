@@ -151,7 +151,7 @@ export const IntegrationSettingsModal = ({ isOpen, handleStart, handleClose }: I
                             <>
                                 {recording.integrations?.google_sheets?.email && (
                                     <Typography sx={{ margin: '20px 0px 30px 0px' }}>
-                                        Authenticated as: {recording.google_sheet_email}
+                                        Authenticated as: {recording.integrations.google_sheets.email}
                                     </Typography>
                                 )}
 
