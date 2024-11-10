@@ -96,7 +96,6 @@ Robot.init(
     integrations: {
       type: DataTypes.JSONB,
       allowNull: true,
-      defaultValue: {},
     },
     schedule: {
       type: DataTypes.JSONB,
