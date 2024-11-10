@@ -376,7 +376,13 @@ router.get(
       }
 
       // Update the Robot model with the modified integrations object
-      await robot.update({ integrations: updatedIntegrations });
+      await Robot.update(
+        { integrations: updatedIntegrations },
+        {
+          where: { "recording_meta.id": robotId },
+          returning: true,
+        }
+      );
 
       capture("maxun-oss-google-sheet-integration-created", {
         user_id: user.id,
@@ -411,7 +417,7 @@ router.get(
       //   files,
       // });
 
-      res.redirect("http://localhost:5173/");
+      res.status(200).redirect("http://localhost:5173/");
     } catch (error: any) {
       res.status(500).json({ message: `Google OAuth error: ${error.message}` });
     }
@@ -545,7 +551,13 @@ router.post("/gsheets/update", requireSignIn, async (req, res) => {
     }
 
     // Update the Robot model with the modified integrations object
-    await robot.update({ integrations: updatedIntegrations });
+    await Robot.update(
+      { integrations: updatedIntegrations },
+      {
+        where: { "recording_meta.id": robotId },
+        returning: true,
+      }
+    );
 
     res.json({ message: "Robot updated with selected Google Sheet ID" });
   } catch (error: any) {
@@ -588,9 +600,13 @@ router.post(
         refresh_token: null,
       };
 
-      await robot.update({ integrations: updatedIntegrations });
-
-      console.log(robot.integrations);
+      await Robot.update(
+        { integrations: updatedIntegrations },
+        {
+          where: { "recording_meta.id": robotId },
+          returning: true,
+        }
+      );
 
       capture("maxun-oss-google-sheet-integration-removed", {
         user_id: req.user.id,
@@ -607,78 +623,77 @@ router.post(
   }
 );
 
-const AIRTABLE_AUTHORIZE_URL = "https://airtable.com/oauth2/v1/authorize";
-const AIRTABLE_TOKEN_URL = "https://airtable.com/oauth2/v1/token";
+// const AIRTABLE_AUTHORIZE_URL = "https://airtable.com/oauth2/v1/authorize";
+// const AIRTABLE_TOKEN_URL = "https://airtable.com/oauth2/v1/token";
 
-const codeVerifier = generateCodeVerifier();
+// const codeVerifier = generateCodeVerifier();
 
-router.get("/airtable", requireSignIn, (req, res) => {
-  const { robotId } = req.query;
-  const scopes = "data.records:read data.records:write";
+// router.get("/airtable", requireSignIn, (req, res) => {
+//   const { robotId } = req.query;
+//   const scopes = "data.records:read data.records:write";
 
-  if (!robotId) {
-    return res.status(400).json({ message: "Robot ID is required" });
-  }
+//   if (!robotId) {
+//     return res.status(400).json({ message: "Robot ID is required" });
+//   }
 
-  const codeChallenge = generateCodeChallenge(codeVerifier);
+//   const codeChallenge = generateCodeChallenge(codeVerifier);
 
-  const authorizeUrl = `${AIRTABLE_AUTHORIZE_URL}?response_type=code&client_id=${
-    process.env.AIRTABLE_CLIENT_ID
-  }&redirect_uri=${
-    process.env.AIRTABLE_REDIRECT_URI
-  }&state=${robotId}&scope=${encodeURIComponent(
-    scopes
-  )}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+//   const authorizeUrl = `${AIRTABLE_AUTHORIZE_URL}?response_type=code&client_id=${
+//     process.env.AIRTABLE_CLIENT_ID
+//   }&redirect_uri=${
+//     process.env.AIRTABLE_REDIRECT_URI
+//   }&state=${robotId}&scope=${encodeURIComponent(
+//     scopes
+//   )}&code_challenge=${codeChallenge}&code_challenge_method=S256`;
 
-  console.log(authorizeUrl);
-  res.json(authorizeUrl);
-});
+//   res.json(authorizeUrl);
+// });
 
-// Step 2: Handle Airtable OAuth callback
-router.get("/airtable/callback", requireSignIn, async (req, res) => {
-  const { code, state } = req.query;
+// // Step 2: Handle Airtable OAuth callback
+// router.get("/airtable/callback", requireSignIn, async (req, res) => {
+//   const { code, state } = req.query;
 
-  try {
-    if (!state) {
-      return res.status(400).json({ message: "Robot ID is required" });
-    }
+//   try {
+//     if (!state) {
+//       return res.status(400).json({ message: "Robot ID is required" });
+//     }
 
-    const robotId = state;
+//     const robotId = state;
 
-    if (typeof code !== "string") {
-      return res.status(400).json({ message: "Invalid code" });
-    }
+//     if (typeof code !== "string") {
+//       return res.status(400).json({ message: "Invalid code" });
+//     }
 
-    const requestBody = qs.stringify({
-      grant_type: "authorization_code",
-      code,
-      client_id: process.env.AIRTABLE_CLIENT_ID,
-      redirect_uri: process.env.AIRTABLE_REDIRECT_URI,
-      code_verifier: codeVerifier,
-    });
+//     const requestBody = qs.stringify({
+//       grant_type: "authorization_code",
+//       code,
+//       client_id: process.env.AIRTABLE_CLIENT_ID,
+//       redirect_uri: process.env.AIRTABLE_REDIRECT_URI,
+//       code_verifier: codeVerifier,
+//     });
 
-    // Configure headers
-    const headers: { [key: string]: string } = {
-      "Content-Type": "application/x-www-form-urlencoded",
-    };
+//     // Configure headers
+//     const headers: { [key: string]: string } = {
+//       "Content-Type": "application/x-www-form-urlencoded",
+//     };
 
-    // Add the Authorization header if client_secret is available
-    if (process.env.AIRTABLE_CLIENT_SECRET) {
-      const credentials = Buffer.from(
-        `${process.env.AIRTABLE_CLIENT_ID}:${process.env.AIRTABLE_CLIENT_SECRET}`
-      ).toString("base64");
-      headers.Authorization = `Basic ${credentials}`;
-    }
+//     // Add the Authorization header if client_secret is available
+//     if (process.env.AIRTABLE_CLIENT_SECRET) {
+//       const credentials = Buffer.from(
+//         `${process.env.AIRTABLE_CLIENT_ID}:${process.env.AIRTABLE_CLIENT_SECRET}`
+//       ).toString("base64");
+//       headers.Authorization = `Basic ${credentials}`;
+//     }
 
-    // Make the POST request to exchange the authorization code for tokens
-    const response = await axios.post(AIRTABLE_TOKEN_URL, requestBody, {
-      headers,
-    });
+//     // Make the POST request to exchange the authorization code for tokens
+//     const response = await axios.post(AIRTABLE_TOKEN_URL, requestBody, {
+//       headers,
+//     });
 
-    const { access_token, refresh_token } = response.data;
+//     const { access_token, refresh_token } = response.data;
 
-    res.json({ access_token, refresh_token });
-  } catch (error: any) {
-    res.status(500).json({ message: `Airtable OAuth error: ${error.message}` });
-  }
-});
+//     res.json({ access_token, refresh_token });
+//   } catch (error: any) {
+//     res.status(500).json({ message: `Airtable OAuth error: ${error.message}` });
+//   }
+// });
