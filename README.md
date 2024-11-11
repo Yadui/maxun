@@ -1,5 +1,3 @@
-Certainly! Here's the reformatted section for better readability:
-
 ---
 
 ### Local Setup
