@@ -35,6 +35,12 @@ Maxun lets you train a robot in 2 minutes and scrape the web on auto-pilot. Web 
 # Clone the repository
 git clone https://github.com/getmaxun/maxun
 
+or, if you'd like to clone into the current directory:
+
+```bash
+git clone https://github.com/getmaxun/maxun .
+```
+
 # Build and start the service with Docker Compose
 docker-compose up -d --build
 ```
